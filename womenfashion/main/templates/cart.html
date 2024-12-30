@@ -1,0 +1,121 @@
+
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<section id="cart_items">
+		<div class="container">
+			<div class="breadcrumbs">
+				<ol class="breadcrumb">
+				  <li><a href="{% url 'home' %}">Home</a></li>
+				  <li class="active">Shopping Cart</li>
+				</ol>
+			</div>
+			<div class="table-responsive cart_info">
+				{% if carts %}
+				<table class="table table-condensed">
+					<thead>
+						<tr class="cart_menu">
+							<td class="image">Item</td><td></td>
+							<td class="size" >Size</td>
+							<td class="color">color</td>
+							<td class="price">Price</td>
+							<td class="quantity">Quantity</td>
+							<td class="total">Total</td>
+							<td></td>
+						</tr>
+					</thead>
+					<tbody>
+						<form method="POST">
+							{% csrf_token %}
+						{% for cart in carts %}
+						<tr data-item-id="{{ cart.id }}">
+							<input type="hidden" value="{{cart.id}}">
+							<input type="hidden" value="{{cart.size}}">
+							<input type="hidden" value="{{cart.color}}">
+							<input type="hidden" value="{{cart.no_of_item}}">
+							<td class="cart_product">
+								<a href=""><img src="{{cart.product.image.url}}" alt="" style="height: 100px;width: 90px;"></a>
+							</td>
+							<td class="cart_description">
+								<h4><a href="">{{cart.product.name|upper}}</a></h4>
+								<p> ID: {{cart.product.id}}</p>
+							</td>
+							<td class="cart_size">
+								<p>{{cart.size|upper}}</p>
+							</td>
+							<td class="cart_color">
+								<p>{{cart.color|upper}}</p>
+							</td>
+							<td class="cart_price">
+								<p>{{cart.individual_price}}</p>
+							</td>
+							<td class="cart_quantity" >
+								
+								<div class="input-group mb-3" style="max-width: 120px;">
+									<div class="input-group-prepend">
+									  <a href="{% url 'minuscart' cart.id %}" class="btn btn-outline-primary">&minus;</a>
+									</div>
+									<input type="text" class="form-control text-center" value="{{cart.no_of_item}}" 
+									  aria-label="Example text with button addon" aria-describedby="button-addon1"  style="width: 40px;">
+									<div class="input-group-append">
+									  <a href="{% url 'pluscart' cart.id %}" class="btn btn-outline-primary">&plus;</a>
+									</div>
+								  </div>
+							</td>
+							<td class="cart_total">
+								<p class="cart_total_price"  id="total_price_{{ forloop.counter }}">{{cart.total_price}}</p>
+							</td>
+							<td class="cart_delete">
+								<a class="cart_quantity_delete" href="{% url 'deletecart' cart.id %}"><i class="fa fa-times"></i></a>
+							</td>
+						</tr>
+						{% endfor %}
+					</form>
+						
+					</tbody>
+				</table>{% else %}
+				<p>No items in the cart</p>
+				{% endif %}
+			</div>
+		</div>
+	</section> <!--/#cart_items-->
+
+	<section id="do_action">
+		<div class="container">
+			
+			<div class="row">
+				
+				<div class="col-sm-6" style="margin-left:600px">
+					<div class="total_area">
+						<ul>
+							<li>Cart Sub Total <span id="display_price"></span></li>
+							<li>Eco Tax <span>20</span></li>
+							<li>Shipping Cost <span>Free</span></li>
+							<li>Total <span id="whole"></span></li>
+						</ul>
+							<a class="btn btn-default check_out"  style="margin-left: 400px;" href="{% url 'check_out' user.id %}">Check Out</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section><!--/#do_action-->
+
+
+	<script>
+		let sum=0;
+		let whole_sum=0;
+		document.querySelectorAll('.cart_total_price').forEach((priceElement, index) => {
+			const totalPrice =priceElement.innerText;
+			console.log("totalprice",totalPrice)
+			sum+=parseFloat(totalPrice)
+			console.log("sum",sum)	
+			whole_sum=sum+parseFloat(20)
+			console.log(whole_sum)		
+		});
+		document.getElementById("display_price").innerText = sum.toFixed(2);
+		document.getElementById("whole").innerText = whole_sum.toFixed(2);
+	</script>
+
+{% endblock %}
+	

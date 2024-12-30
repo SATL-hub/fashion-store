@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+	
+	
+	
+	<section><h2 class="title text-center">Your WishList</h2>
+		<div class="col-sm-9 padding-right">
+			<div class="features_items"><!--features_items-->
+				
+				<div id="product_details">
+					<div id="productList"  style="margin-left: 250px;">
+					{% for item in wishes %}
+				
+				<div class="col-sm-4" id = ""  >
+					<div class="product-image-wrapper">
+						<div class="single-products">
+								<div class="productinfo text-center">
+									<img src={{item.product.image.url}} alt="" style="width: 300px;height: 300px;" />
+									<h2>${{item.product.price}}</h2>
+									<p>{{item.product.name}}</p>
+									<a href="{% url 'product_detail' item.product.id %}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+								</div>
+								<div class="product-overlay">
+									<div class="overlay-content">
+										<h2>${{item.product.price}}</h2>
+										<p>{{item.product.name}}</p>
+										<a href="{% url 'product_detail' item.product.id %}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+									</div>
+								</div>
+						</div>
+						
+					</div>
+				</div>
+					
+				{% endfor %}
+			</div>
+			</div></section>
+								{% endblock %}
+								
+	

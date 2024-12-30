@@ -1,0 +1,96 @@
+
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<section id="cart_items">
+		<div class="container">
+	<h1 style="text-align: center;">History</h1>
+    <canvas id="myCanvas" width="300" height="170" style="padding-left: 400px;margin-top: -70px;">
+        Sorry, your browser does not support canvas.
+        </canvas>
+        
+			<div class="table-responsive cart_info" style="border: none; width: 1300px;margin-left: -70px;">
+				{% if hists %}
+				<table class="table table-condensed" >
+					<thead>
+						<tr class="cart_menu">
+							<td class="image" style="padding-left: 120px;"></td>
+                            <td class="item">item</td>
+							<td class="size" style="padding-left: 50px;" >Size</td>
+							<td class="color" style="padding-left: 50px;">Color</td>
+							<td class="price" style="padding-left: 50px;">Price</td>
+							<td class="quantity" style="padding-left: 50px;">Quantity</td>
+							<td class="total" style="padding-left: 50px;">Total</td>
+                            <td class="payment_mode" style="padding-left: 50px;">Payment Mode</td>
+
+                            <td class="order_status" style="padding-left: 50px;">Order Status</td>
+
+                            <td class="ordered_on" style="padding-left: 50px;">Purchase Date</td>
+
+							<td></td>
+						</tr>
+					</thead>
+					<tbody>
+						
+						{% for hist in hists %}
+						<tr data-item-id="{{ hist.id }}">
+							<input type="hidden" value="{{hist.id}}">
+							<input type="hidden" value="{{hist.size}}">
+							<input type="hidden" value="{{hst.color}}">
+							<input type="hidden" value="{{hist.no_of_item}}">
+							<td class="cart_product">
+								<a href=""><img src="{{hist.image.url}}" alt="" style="height: 100px;width: 90px;"></a>
+							</td>
+							<td class="cart_description">
+								<p><b>{{hist.item|upper}}</b></p>
+							</td>
+							<td class="cart_size" style="padding-left: 50px;">
+								<p>{{hist.size|upper}}</p>
+							</td>
+							<td class="cart_color" style="padding-left: 50px;">
+								<p>{{hist.color|upper}}</p>
+							</td>
+							<td class="cart_price" style="padding-left: 50px;">
+								<p>{{hist.individual_price}}</p>
+							</td>
+                            <td class="cart_price" style="padding-left: 50px;">
+								<p>{{hist.no_of_item}}</p>
+							</td>
+                            <td class="cart_total" style="padding-left: 50px;">
+								<p class="cart_total_price"  id="total_price_{{ forloop.counter }}">{{hist.total_price}}</p>
+							</td>
+                            <td class="cart_price" style="padding-left: 50px;">
+								<p>{{hist.payment_mode}}</p>
+							</td>
+                            <td class="cart_price" style="padding-left: 50px;">
+								<p>{{hist.status}}</p>
+							</td>
+                            <td class="cart_price" style="padding-left: 50px;">
+								<p>{{hist.ordered_on|date:"d M Y"}}</p>
+							</td>
+							
+							
+						</tr>
+						{% endfor %}
+						
+					</tbody>
+				</table>{% else %}
+				<p>No items purchased before...</p>
+				{% endif %}
+			</div>
+		</div>
+	</section> <!--/#cart_items-->
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        ctx.beginPath();
+        ctx.moveTo(20, 20);
+        ctx.bezierCurveTo(50, 150, 300, 5, 310, 100);
+        ctx.stroke();
+        </script>
+
+
+{% endblock %}
+	

@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+		
+
+		{% block content %}
+		{% load static %}
+	<style>
+		.products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.product {
+    border: 1px solid #ccc;
+    padding: 15px;
+    text-align: center;
+    width: 200px;
+}
+
+.product img {
+    max-width: 100%;
+    height: auto;
+}
+
+.product button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.product button:hover {
+    background-color: #0056b3;
+}
+
+	</style>
+	
+	
+	<section>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="left-sidebar">
+						<h2>Category</h2>
+						<div class="panel-group category-products" id="accordian"><!--category-productsr-->
+							{% for category in categories %}
+    {% with category_name=category.category|slugify %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordian" href="#{{ category_name }}">
+                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                    {{ category_name }}
+                </a>
+            </h4>
+        </div>
+        <div id="{{ category_name }}" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul>
+					{% for product in category.unique_products %}
+                    <li><a href="#" class="type-filter" data-target="{{ category_name }}">{{ product}}</a></li>
+					{% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endwith %}
+{% endfor %}
+							
+						
+						
+
+						
+						</div><!--/category-products-->
+					
+						
+						
+						<div class="price-range"><!--price-range-->
+							<h2>Price Range</h2>
+							<div class="well text-center">
+								 <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="{{max}}" data-slider-step="5" data-slider-value="[550,900]" id="sl2" ><br />
+								 <b class="pull-left">$ 0</b> <b class="pull-right">$ {{max}}</b>
+							</div>
+						</div><!--/price-range-->
+						
+						<div class="shipping text-center"><!--shipping-->
+							<img src="{% static 'images/home/shipping.jpg' %}" alt="" />
+						</div><!--/shipping-->
+					
+					</div>
+				</div>
+				<div class="col-sm-9 padding-right">
+					<div class="features_items"><!--features_items-->
+						<h2 class="title text-center">Select Your Items</h2>
+						<div id="product_details">
+							<div id="productList">
+							{% for item in products %}
+						
+						<div class="col-sm-4" id = "" >
+							<div class="product-image-wrapper">
+								<div class="single-products">
+										<div class="productinfo text-center">
+											<img src={{item.image.url}} alt="" style="width: 200px;height: 200px;" />
+											<h2>${{item.price}}</h2>
+											<p>{{item.name}}</p>
+											<a href="{% url 'product_detail' item.id %}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+										</div>
+										<div class="product-overlay">
+											<div class="overlay-content">
+												<h2>${{item.price}}</h2>
+												<p>{{item.name}}</p>
+												<a href="{% url 'product_detail' item.id %}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+											</div>
+										</div>
+								</div>
+								<div class="choose">
+									<ul class="nav nav-pills nav-justified">
+										<li><a href="{% url 'wishlist' item.id %}"><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+							
+						{% endfor %}
+					</div>
+					</div>
+						
+						
+						
+						
+						
+						
+						
+					</div><!--features_items-->
+					
+				
+					
+					
+							
+								
+								
+							</div>
+									
+						</div>
+					</div><!--/recommended_items-->
+					
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+<script>
+   
+    $(document).ready(function () {
+       
+        const priceSlider = $('#sl2').slider();
+		console.log("priceslider",priceSlider)
+        
+        priceSlider.on('slideStop', function (event) {
+            const priceRange = event.value;  
+
+            
+            console.log('Selected Price Range:', priceRange);
+
+          
+            fetch(`/filter_products_by_price?min_price=${priceRange[0]}&max_price=${priceRange[1]}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();  
+                })
+                .then(data => {
+                   
+					console.log("data",data)
+                    const productList = document.getElementById('productList');
+					console.log('prolist',productList)
+                    productList.innerHTML = '';
+
+                    
+                    if (data.products && data.products.length > 0) {
+                        data.products.forEach(product => {
+							const productDetailURL = `/product_detail/${product.id}/`;
+                            const productDiv = document.createElement('div');
+        productDiv.className = "col-sm-4"; 
+		
+        productDiv.innerHTML = `
+            <div class="product-image-wrapper">
+                <div class="single-products">
+                    <div class="productinfo text-center">
+                        <img src=${product.image} alt="" style="width: 200px; height: 200px;" />
+                        <h2>$${product.price}</h2>
+                        <p>${product.name}</p>
+                        <a href="${productDetailURL}" class="btn btn-default add-to-cart">
+                            <i class="fa fa-shopping-cart"></i>Add to cart
+                        </a>
+                    </div>
+                    <div class="product-overlay">
+                        <div class="overlay-content">
+                            <h2>$${product.price}</h2>
+                            <p>${product.name}</p>
+                            <a href="${productDetailURL}" class="btn btn-default add-to-cart">
+                                <i class="fa fa-shopping-cart"></i>Add to cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="choose">
+                    <ul class="nav nav-pills nav-justified">
+                        <li><a href="#"><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
+                    </ul>
+                </div>
+            </div>
+        `;
+                            productList.appendChild(productDiv);
+                        });
+                    } else {
+                      
+                        productList.innerHTML = '<li>No products found</li>';
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        });
+    });
+</script>
+
+
+	<script>
+		const type_filter = document.querySelectorAll(".type-filter");
+		console.log("type_filter",type_filter)
+		type_filter.forEach(button => {
+    button.addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+		a = this.getAttribute('data-target')
+		console.log("aaaaaaaaa",a)
+		name=this.textContent
+		console.log("naaaaaam",name)
+		fetchproduct_details(name,a)
+        //alert(`You clicked: ${this.textContent}`);
+    });
+	
+});function fetchproduct_details(name,a){
+	fetch(`/product-filter/${name}/${a}/`)
+	.then(response => response.json())
+	.then(data =>{
+		console.log("wlcome",data)
+		const container = document.getElementById('product_details');
+		container.innerHTML="";
+		if(data.products.length>0){
+			data.products.forEach(product => {
+				const productDetailURL = `/product_detail/${product.id}/`;
+                        const productHTML = `
+						<div class="col-sm-4" id = "" >
+						<div class="product-image-wrapper">
+								<div class="single-products">
+										<div class="productinfo text-center">
+											<img src="${product.image}" alt="" style="width: 200px;height: 200px;" />
+											<h2>$${product.price}</h2>
+											<p>${product.name}</p>
+											<a href="${productDetailURL}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+										</div>
+										<div class="product-overlay">
+											<div class="overlay-content">
+												<h2>$${product.price}</h2>
+												<p>${product.name}</p>
+												<a href="${productDetailURL}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+											</div>
+										</div>
+								</div>
+								<div class="choose">
+									<ul class="nav nav-pills nav-justified">
+										<li><a href="#"><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
+									</ul>
+								</div>
+							</div></div>
+                        `;
+						
+                        container.innerHTML += productHTML;
+                    });
+                } else {
+                    container.innerHTML = "<p>No products found for this category.</p>";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching products:", error);
+            });
+    }
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			const buttons = document.querySelectorAll(".category-btn");
+			buttons.forEach(button => {
+				button.addEventListener("click", () => {
+					const category = button.getAttribute("data-category"); // Get category name
+					console.log("category",category)
+					fetchProducts(category);
+				});
+			});
+		});
+	
+		function fetchProducts(category) {
+			// Fetch products from the API
+			console.log("qqqqqqqqqq")
+			fetch(`/api/products/${category}/`)
+				.then(response => response.json())
+				.then(data => {
+					// Display products in the container
+					const container = document.getElementById("products-container");
+					container.innerHTML = ""; // Clear previous products
+					console.log("data",data)
+					if (data.products.length > 0) {
+						data.products.forEach(product => {
+							const productHTML = `
+							<div class="col-sm-3">
+										<div class="product-image-wrapper">
+											<div class="single-products">
+												<div class="productinfo text-center" >
+									<img src="${product.image}" alt="${product.name}" style="width:200px;height:200px;">
+									<h2>$${product.price}</h2>
+									<p>${product.name}</p>
+									<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a></div></div></div></div>
+							`;
+							
+							container.innerHTML += productHTML;
+						});
+					} else {
+						container.innerHTML = "<p>No products found for this category.</p>";
+					}
+				})
+				.catch(error => {
+					console.error("Error fetching products:", error);
+				});
+		}
+	
+	
+		</script>
+	{% endblock %}
+	

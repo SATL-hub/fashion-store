@@ -1,0 +1,37 @@
+1.Python program to select a random element from a list, set, dictionary-value
+print("Select a random element from a list:")
+elements = [1, 2, 3, 4, 5]
+print(random.choice(elements))
+print(random.choice(elements))
+print(random.choice(elements))
+print("\nSelect a random element from a set:")
+elements = set([1, 2, 3, 4, 5])
+# convert to tuple because sets are invalid inputs
+print(random.choice(tuple(elements)))
+print(random.choice(tuple(elements)))
+print(random.choice(tuple(elements)))
+print("\nSelect a random value from a dictionary:")
+d = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}
+key = random.choice(list(d))
+print(d[key])
+key = random.choice(list(d))
+print(d[key])
+key = random.choice(list(d))
+print(d[key])
+
+2.Python program to shuffle the elements of a given list.
+
+Use random.shuffle()
+import random 
+nums = [1, 2, 3, 4, 5]
+print("Original list:")
+print(nums)
+random.shuffle(nums)
+print("Shuffle list:")
+print(nums)
+words = ['red', 'black', 'green', 'blue']
+print("\nOriginal list:")
+print(words)
+random.shuffle(words)
+print("Shuffle list:")
+print(words)
